@@ -50,7 +50,7 @@ proc count_word {nick} {
     write_word_counts $word_counts
 }
 
-proc get_top10 {} {
+proc get_top10 {nick uhost hand chan} {
     set word_counts [read_word_counts]
     set sorted [lsort -integer -decreasing -index 1 $word_counts]
 
@@ -60,7 +60,7 @@ proc get_top10 {} {
         append result [expr {$i + 1}].[lindex $count 0] - [lindex $count 1], " "
     }
 
-    return $result
+    putquick "PRIVMSG $chan :Top 10 graczy: $result"
 }
 
 proc game_start {nick uhost hand chan} {
@@ -84,8 +84,8 @@ proc game_stop {nick uhost hand chan} {
     write_word_counts [list]
 }
 
-bind pubm - "!statstart" game_start
-bind pubm - "!statstop" game_stop
-bind pubm - "!top10" get_top10
+bind pub - "!statstart" game_start
+bind pub - "!statstop" game_stop
+bind pub - "!top10" get_top10
 
 bind pub - "*!*" count_word
